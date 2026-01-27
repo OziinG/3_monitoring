@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Monitoring Dashboard</title>
     <style>
         * {
@@ -83,17 +86,18 @@
         <button class="tab" onclick="switchTab('match')">Match Report</button>
     </div>
 
-    <iframe id="content" class="content" src="db.html"></iframe>
+    <iframe id="content" class="content" src="db.html?v=1769558245"></iframe>
 
     <div class="updated">
-        Last updated: 2026-01-28 08:52:30
+        Last updated: 2026-01-28 08:57:25
     </div>
 
     <script>
+        const cacheBust = '1769558245';
         function switchTab(page) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             event.target.classList.add('active');
-            document.getElementById('content').src = page + '.html';
+            document.getElementById('content').src = page + '.html?v=' + cacheBust;
         }
     </script>
 </body>

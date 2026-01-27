@@ -14,7 +14,11 @@ def generate_index():
     """Generate main index.html with tab navigation."""
     env = Environment(loader=FileSystemLoader(PROJECT_DIR / 'templates'))
     template = env.get_template('index.html.jinja')
-    html = template.render(updated_at=datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    now = datetime.now()
+    html = template.render(
+        updated_at=now.strftime("%Y-%m-%d %H:%M:%S"),
+        cache_bust=int(now.timestamp())
+    )
     (PROJECT_DIR / 'index.html').write_text(html)
     print("Generated index.html")
 
