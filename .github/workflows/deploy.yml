@@ -1,0 +1,91 @@
+name: Deploy Monitoring Dashboard
+
+on:
+  schedule:
+    # DB monitoring: Every hour
+    - cron: '0 * * * *'
+    # Match report: Daily at 4 PM KST (7:00 UTC)
+    - cron: '0 7 * * *'
+
+  workflow_dispatch:
+    inputs:
+      module:
+        description: 'Module to update'
+        required: true
+        type: choice
+        options:
+          - all
+          - db
+          - match
+        default: all
+      reason:
+        description: 'Reason for manual deployment'
+        required: false
+        default: 'Manual trigger'
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Create .env file
+        run: |
+          cat > .env << EOF
+          PROD_DB_HOST=${{ secrets.PROD_DB_HOST }}
+          PROD_DB_PORT=${{ secrets.PROD_DB_PORT }}
+          PROD_DB_NAME=${{ secrets.PROD_DB_NAME }}
+          PROD_DB_USER=${{ secrets.PROD_DB_USER }}
+          PROD_DB_PASSWORD=${{ secrets.PROD_DB_PASSWORD }}
+          EOF
+
+      - name: Determine modules to update
+        id: modules
+        run: |
+          MODULE="${{ github.event.inputs.module || 'all' }}"
+          echo "module=$MODULE" >> $GITHUB_OUTPUT
+
+      - name: Collect DB metadata
+        if: steps.modules.outputs.module == 'all' || steps.modules.outputs.module == 'db'
+        run: python src/db/collect_metadata.py
+
+      - name: Query match data
+        if: steps.modules.outputs.module == 'all' || steps.modules.outputs.module == 'match'
+        run: python src/match/query_matches.py today
+
+      - name: Generate all HTML pages
+        run: python generate_all.py
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add src/db/db_monitoring.sqlite src/match/data.txt index.html db.html match.html
+
+          REASON="${{ github.event.inputs.reason || 'Scheduled update' }}"
+          git commit -m "Update monitoring dashboard $(date +'%Y-%m-%d %H:%M:%S UTC') - ${REASON}" || {
+            echo "No changes to commit"
+            exit 0
+          }
+
+          git push origin main

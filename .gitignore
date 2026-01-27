@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+.env.local
+venv/
+.venv/
+
+# Allow specific data files
+*.sqlite
+!src/db/db_monitoring.sqlite
+*.db
+
+# OS
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+
+# Runtime
+uvicorn.log
