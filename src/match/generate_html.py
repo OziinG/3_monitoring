@@ -26,15 +26,20 @@ def parse_data():
                 continue
 
             parts = line.split('|')
-            if len(parts) != 5:
+            if len(parts) < 5:
                 continue
 
-            date, vehicle, op_type, driver, match = parts
+            date, vehicle, op_type, driver, match = parts[:5]
+            start_time = parts[5] if len(parts) > 5 else ''
+            end_time = parts[6] if len(parts) > 6 else ''
+
             data[date].append({
                 'vehicle': vehicle,
                 'type': op_type if op_type else None,
                 'driver': driver if driver else None,
-                'match': match == 'O'
+                'match': match == 'O',
+                'start': start_time if start_time else None,
+                'end': end_time if end_time else None
             })
 
     return dict(data)
@@ -50,8 +55,10 @@ def generate_html(data):
             type_str = f'"{item["type"]}"' if item['type'] else 'null'
             driver_str = f'"{item["driver"]}"' if item['driver'] else 'null'
             match_str = 'true' if item['match'] else 'false'
+            start_str = f'"{item["start"]}"' if item['start'] else 'null'
+            end_str = f'"{item["end"]}"' if item['end'] else 'null'
             item_strs.append(
-                f'{{ vehicle: "{item["vehicle"]}", type: {type_str}, driver: {driver_str}, match: {match_str} }}'
+                f'{{ vehicle: "{item["vehicle"]}", type: {type_str}, driver: {driver_str}, match: {match_str}, start: {start_str}, end: {end_str} }}'
             )
         js_data_items.append(
             f'            "{date}": [\n                ' +
@@ -215,6 +222,11 @@ def generate_html(data):
             background: #f1f5f9;
             color: #475569;
         }}
+        .time-range {{
+            font-size: 13px;
+            color: #666;
+            font-family: monospace;
+        }}
         .update-time {{
             text-align: center;
             color: #999;
@@ -243,6 +255,7 @@ def generate_html(data):
                 <th>차량번호</th>
                 <th>운영구분</th>
                 <th>배송원</th>
+                <th>배정시간</th>
                 <th>배정상태</th>
             </tr>
         </thead>
@@ -285,6 +298,13 @@ function formatDateLabel(dateStr) {{
     return `${{date.getMonth()+1}}월 ${{date.getDate()}}일 (${{days[date.getDay()]}})`;
 }}
 
+function formatTimeRange(start, end) {{
+    if (!start && !end) return '-';
+    if (start && end) return `${{start}} - ${{end}}`;
+    if (start) return `${{start}} -`;
+    return `- ${{end}}`;
+}}
+
 function renderDateNav() {{
     const select = document.getElementById('dateSelect');
     select.innerHTML = sortedDates.map(d =>
@@ -323,6 +343,7 @@ function renderTable(date) {{
             <td>${{item.vehicle}}</td>
             <td>${{item.type ? `<span class="badge ${{getTypeBadgeClass(item.type)}}">${{getTypeLabel(item.type)}}</span>` : '-'}}</td>
             <td>${{item.driver || '-'}}</td>
+            <td class="time-range">${{formatTimeRange(item.start, item.end)}}</td>
             <td><span class="badge ${{item.match ? 'badge-match' : 'badge-nomatch'}}">${{item.match ? 'O' : 'X'}}</span></td>
         </tr>
     `).join('');

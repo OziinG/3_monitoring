@@ -47,7 +47,9 @@ def query_matches(work_date: str) -> list:
             t.plate_number as vehicle_number,
             t.operation_type,
             COALESCE(d.name, '') as driver_name,
-            CASE WHEN dvm.id IS NOT NULL THEN 'O' ELSE 'X' END as match_status
+            CASE WHEN dvm.id IS NOT NULL THEN 'O' ELSE 'X' END as match_status,
+            TO_CHAR(dvm.match_start_time AT TIME ZONE 'Asia/Seoul', 'HH24:MI') as start_time,
+            TO_CHAR(dvm.match_end_time AT TIME ZONE 'Asia/Seoul', 'HH24:MI') as end_time
         FROM dashboard_terminal t
         LEFT JOIN schedule_drivervehiclematch dvm
             ON dvm.vehicle_id = t.id
@@ -77,8 +79,10 @@ def append_data(work_date: str):
     results = query_matches(work_date)
 
     with open(DATA_FILE, "a", encoding="utf-8") as f:
-        for date, vehicle, op_type, driver, match in results:
-            f.write(f"{date}|{vehicle}|{op_type}|{driver}|{match}\n")
+        for date, vehicle, op_type, driver, match, start_time, end_time in results:
+            start = start_time or ''
+            end = end_time or ''
+            f.write(f"{date}|{vehicle}|{op_type}|{driver}|{match}|{start}|{end}\n")
 
     print(f"Added {len(results)} records for {work_date}")
 
