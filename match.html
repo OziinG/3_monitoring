@@ -151,6 +151,11 @@
             background: #f1f5f9;
             color: #475569;
         }
+        .time-range {
+            font-size: 13px;
+            color: #666;
+            font-family: monospace;
+        }
         .update-time {
             text-align: center;
             color: #999;
@@ -179,51 +184,52 @@
                 <th>차량번호</th>
                 <th>운영구분</th>
                 <th>배송원</th>
+                <th>배정시간</th>
                 <th>배정상태</th>
             </tr>
         </thead>
         <tbody id="tableBody"></tbody>
     </table>
 
-    <p class="update-time">마지막 업데이트: 2026-01-27 15:21:54</p>
+    <p class="update-time">마지막 업데이트: 2026-01-27 15:40:49</p>
 </div>
 
 <script>
 const data = {
             "2026-01-26": [
-                { vehicle: "경기82배2211", type: "SALES", driver: null, match: false },
-                { vehicle: "경기82배2256", type: "SALES", driver: null, match: false },
-                { vehicle: "경기89배5556", type: "SALES", driver: null, match: false },
-                { vehicle: "경기93자6642", type: "COMPANY_OWNED", driver: null, match: false },
-                { vehicle: "서울00가0000", type: "COMPANY_OWNED", driver: null, match: false },
-                { vehicle: "서울90바8671", type: "SUBSCRIPTION", driver: null, match: false },
-                { vehicle: "세종86바3338", type: "SALES", driver: null, match: false },
-                { vehicle: "세종86바3341", type: "SALES", driver: null, match: false },
-                { vehicle: "전북91사4701", type: "COMPANY_OWNED", driver: null, match: false },
-                { vehicle: "전북91사4710", type: "COMPANY_OWNED", driver: null, match: false },
-                { vehicle: "전북91사4768", type: "COMPANY_OWNED", driver: null, match: false },
-                { vehicle: "전북91사4769", type: "COMPANY_OWNED", driver: null, match: false },
-                { vehicle: "전북91사4775", type: "SUBSCRIPTION", driver: null, match: false },
-                { vehicle: "전북91사4820", type: "COMPANY_OWNED", driver: null, match: false },
-                { vehicle: "서울90바8676", type: "COMPANY_OWNED", driver: "유영진", match: true }
+                { vehicle: "경기82배2211", type: "SALES", driver: null, match: false, start: null, end: null },
+                { vehicle: "경기82배2256", type: "SALES", driver: null, match: false, start: null, end: null },
+                { vehicle: "경기89배5556", type: "SALES", driver: null, match: false, start: null, end: null },
+                { vehicle: "경기93자6642", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "서울00가0000", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "서울90바8671", type: "SUBSCRIPTION", driver: null, match: false, start: null, end: null },
+                { vehicle: "세종86바3338", type: "SALES", driver: null, match: false, start: null, end: null },
+                { vehicle: "세종86바3341", type: "SALES", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4701", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4710", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4768", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4769", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4775", type: "SUBSCRIPTION", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4820", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "서울90바8676", type: "COMPANY_OWNED", driver: "유영진", match: true, start: "19:10", end: "07:50" }
             ],
             "2026-01-27": [
-                { vehicle: "경기82배2211", type: "SALES", driver: null, match: false },
-                { vehicle: "경기82배2256", type: "SALES", driver: null, match: false },
-                { vehicle: "경기89배5556", type: "SALES", driver: null, match: false },
-                { vehicle: "경기93자6642", type: "COMPANY_OWNED", driver: null, match: false },
-                { vehicle: "서울90바8671", type: "SUBSCRIPTION", driver: null, match: false },
-                { vehicle: "서울90바8676", type: "COMPANY_OWNED", driver: null, match: false },
-                { vehicle: "세종86바3338", type: "SALES", driver: null, match: false },
-                { vehicle: "세종86바3341", type: "SALES", driver: null, match: false },
-                { vehicle: "전북91사4701", type: "COMPANY_OWNED", driver: null, match: false },
-                { vehicle: "전북91사4710", type: "COMPANY_OWNED", driver: null, match: false },
-                { vehicle: "전북91사4768", type: "COMPANY_OWNED", driver: null, match: false },
-                { vehicle: "전북91사4769", type: "COMPANY_OWNED", driver: null, match: false },
-                { vehicle: "전북91사4775", type: "SUBSCRIPTION", driver: null, match: false },
-                { vehicle: "전북91사4820", type: "COMPANY_OWNED", driver: null, match: false },
-                { vehicle: "서울00가0000", type: "COMPANY_OWNED", driver: "임지인", match: true },
-                { vehicle: "서울00가0000", type: "COMPANY_OWNED", driver: "임지인", match: true }
+                { vehicle: "경기82배2211", type: "SALES", driver: null, match: false, start: null, end: null },
+                { vehicle: "경기82배2256", type: "SALES", driver: null, match: false, start: null, end: null },
+                { vehicle: "경기89배5556", type: "SALES", driver: null, match: false, start: null, end: null },
+                { vehicle: "경기93자6642", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "서울90바8671", type: "SUBSCRIPTION", driver: null, match: false, start: null, end: null },
+                { vehicle: "서울90바8676", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "세종86바3338", type: "SALES", driver: null, match: false, start: null, end: null },
+                { vehicle: "세종86바3341", type: "SALES", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4701", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4710", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4768", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4769", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4775", type: "SUBSCRIPTION", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4820", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "서울00가0000", type: "COMPANY_OWNED", driver: "임지인", match: true, start: null, end: null },
+                { vehicle: "서울00가0000", type: "COMPANY_OWNED", driver: "임지인", match: true, start: null, end: null }
             ]
         };
 const sortedDates = Object.keys(data).sort().reverse();
@@ -255,6 +261,13 @@ function formatDateLabel(dateStr) {
     const date = new Date(dateStr);
     const days = ['일','월','화','수','목','금','토'];
     return `${date.getMonth()+1}월 ${date.getDate()}일 (${days[date.getDay()]})`;
+}
+
+function formatTimeRange(start, end) {
+    if (!start && !end) return '-';
+    if (start && end) return `${start} - ${end}`;
+    if (start) return `${start} -`;
+    return `- ${end}`;
 }
 
 function renderDateNav() {
@@ -295,6 +308,7 @@ function renderTable(date) {
             <td>${item.vehicle}</td>
             <td>${item.type ? `<span class="badge ${getTypeBadgeClass(item.type)}">${getTypeLabel(item.type)}</span>` : '-'}</td>
             <td>${item.driver || '-'}</td>
+            <td class="time-range">${formatTimeRange(item.start, item.end)}</td>
             <td><span class="badge ${item.match ? 'badge-match' : 'badge-nomatch'}">${item.match ? 'O' : 'X'}</span></td>
         </tr>
     `).join('');
