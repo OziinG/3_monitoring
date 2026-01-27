@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
 data.txt를 읽어서 HTML 파일을 자동 생성하는 스크립트
+차량 기준 배송원 배정 현황
 사용법: python3 generate_html.py
 """
 
@@ -15,7 +16,7 @@ HTML_FILE = os.path.join(PROJECT_DIR, "match.html")
 
 
 def parse_data():
-    """data.txt 파싱"""
+    """data.txt 파싱 (차량 기준)"""
     data = defaultdict(list)
 
     with open(DATA_FILE, 'r', encoding='utf-8') as f:
@@ -25,13 +26,14 @@ def parse_data():
                 continue
 
             parts = line.split('|')
-            if len(parts) != 4:
+            if len(parts) != 5:
                 continue
 
-            date, name, op_type, match = parts
+            date, vehicle, op_type, driver, match = parts
             data[date].append({
-                'name': name,
+                'vehicle': vehicle,
                 'type': op_type if op_type else None,
+                'driver': driver if driver else None,
                 'match': match == 'O'
             })
 
@@ -46,9 +48,10 @@ def generate_html(data):
         item_strs = []
         for item in items:
             type_str = f'"{item["type"]}"' if item['type'] else 'null'
+            driver_str = f'"{item["driver"]}"' if item['driver'] else 'null'
             match_str = 'true' if item['match'] else 'false'
             item_strs.append(
-                f'{{ name: "{item["name"]}", type: {type_str}, match: {match_str} }}'
+                f'{{ vehicle: "{item["vehicle"]}", type: {type_str}, driver: {driver_str}, match: {match_str} }}'
             )
         js_data_items.append(
             f'            "{date}": [\n                ' +
@@ -64,7 +67,7 @@ def generate_html(data):
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>컬리/R 차량 매칭 현황</title>
+    <title>컬리/R 차량 배정 현황</title>
     <style>
         * {{
             margin: 0;
@@ -222,8 +225,8 @@ def generate_html(data):
 </head>
 <body>
 <div class="container">
-    <h1>컬리/R 차량 매칭 현황</h1>
-    <p class="summary">Fleet ID: 29 | 근태 출근자 기준</p>
+    <h1>컬리/R 차량 배정 현황</h1>
+    <p class="summary">Fleet ID: 29 | 차량 기준 배송원 배정</p>
 
     <div class="header-row">
         <div class="date-selector">
@@ -237,10 +240,10 @@ def generate_html(data):
     <table>
         <thead>
             <tr>
-                <th>날짜</th>
-                <th>근태자</th>
+                <th>차량번호</th>
                 <th>운영구분</th>
-                <th>차량매칭</th>
+                <th>배송원</th>
+                <th>배정상태</th>
             </tr>
         </thead>
         <tbody id="tableBody"></tbody>
@@ -301,10 +304,10 @@ function renderStats(date) {{
     const rate = total ? Math.round(matched / total * 100) : 0;
 
     document.getElementById('stats').innerHTML = `
-        <div class="stat-card"><div class="number">${{total}}</div><div class="label">총 출근자</div></div>
-        <div class="stat-card match"><div class="number">${{matched}}</div><div class="label">매칭 완료</div></div>
-        <div class="stat-card nomatch"><div class="number">${{notMatched}}</div><div class="label">미매칭</div></div>
-        <div class="stat-card"><div class="number">${{rate}}%</div><div class="label">매칭률</div></div>
+        <div class="stat-card"><div class="number">${{total}}</div><div class="label">총 차량</div></div>
+        <div class="stat-card match"><div class="number">${{matched}}</div><div class="label">배정 완료</div></div>
+        <div class="stat-card nomatch"><div class="number">${{notMatched}}</div><div class="label">미배정</div></div>
+        <div class="stat-card"><div class="number">${{rate}}%</div><div class="label">배정률</div></div>
     `;
 }}
 
@@ -312,14 +315,14 @@ function renderTable(date) {{
     const items = data[date] || [];
     const sorted = [...items].sort((a,b) => {{
         if (a.match !== b.match) return b.match - a.match;
-        return a.name.localeCompare(b.name,'ko');
+        return a.vehicle.localeCompare(b.vehicle,'ko');
     }});
 
     document.getElementById('tableBody').innerHTML = sorted.map(item => `
         <tr>
-            <td>${{date}}</td>
-            <td>${{item.name}}</td>
+            <td>${{item.vehicle}}</td>
             <td>${{item.type ? `<span class="badge ${{getTypeBadgeClass(item.type)}}">${{getTypeLabel(item.type)}}</span>` : '-'}}</td>
+            <td>${{item.driver || '-'}}</td>
             <td><span class="badge ${{item.match ? 'badge-match' : 'badge-nomatch'}}">${{item.match ? 'O' : 'X'}}</span></td>
         </tr>
     `).join('');

@@ -1,4 +1,8 @@
-"""Query driver-vehicle matching data from PostgreSQL."""
+"""Query vehicle-driver matching data from PostgreSQL.
+
+Based on Terminal (vehicle) with Fleet ID = 29 (Kurly/R).
+Shows which drivers are assigned to each vehicle.
+"""
 import os
 import sys
 from datetime import datetime, timedelta
@@ -28,62 +32,35 @@ def get_db_config():
 
 def query_matches(work_date: str) -> list:
     """
-    Query driver-vehicle matches for a specific work date.
+    Query vehicle-driver matches for a specific work date.
 
-    Note: Due to overnight shift (22:00 ~ 10:00 next day),
-    attendance is recorded on work_date + 1 day.
+    Based on Terminal (vehicle) with Fleet ID = 29.
+    Returns: date, vehicle_number, operation_type, driver_name, match_status
     """
-    work_dt = datetime.strptime(work_date, "%Y-%m-%d")
-    attendance_date = (work_dt + timedelta(days=1)).strftime("%Y-%m-%d")
-
     config = get_db_config()
     conn = psycopg2.connect(**config)
     cursor = conn.cursor()
 
     query = """
-        WITH attendance_users AS (
-            SELECT
-                a.time as work_date,
-                d.name as driver_name,
-                d.id as doc_id,
-                u.id as user_id
-            FROM documents_attendance a
-            JOIN documents_document d ON a.attendee_id = d.id
-            LEFT JOIN core_user u ON u.delivery_user_id = d.id
-                AND u.role = 'inhouse_delivery'
-            WHERE a.fleet_id = %(fleet_id)s
-              AND a.time::date = %(attendance_date)s::date
-              AND a.status NOT IN ('OFF', 'ANNUAL_LEAVE')
-        ),
-        match_users AS (
-            SELECT
-                dvm.work_date,
-                d.name as driver_name,
-                d.id as doc_id,
-                dvm.user_id,
-                t.operation_type,
-                dvm.id as match_id
-            FROM schedule_drivervehiclematch dvm
-            JOIN core_user u ON dvm.user_id = u.id
-            JOIN documents_document d ON u.delivery_user_id = d.id
-            JOIN dashboard_terminal t ON dvm.vehicle_id = t.id
-            WHERE t.fleet_id = %(fleet_id)s
-              AND dvm.work_date = %(work_date)s::date
-        )
         SELECT
             %(work_date)s as date,
-            COALESCE(au.driver_name, mu.driver_name) as name,
-            COALESCE(MAX(mu.operation_type), '') as op_type,
-            CASE WHEN COUNT(mu.match_id) > 0 THEN 'O' ELSE 'X' END as match
-        FROM attendance_users au
-        FULL OUTER JOIN match_users mu ON au.doc_id = mu.doc_id
-        GROUP BY COALESCE(au.driver_name, mu.driver_name)
-        ORDER BY match DESC, name;
+            t.plate_number as vehicle_number,
+            t.operation_type,
+            COALESCE(d.name, '') as driver_name,
+            CASE WHEN dvm.id IS NOT NULL THEN 'O' ELSE 'X' END as match_status
+        FROM dashboard_terminal t
+        LEFT JOIN schedule_drivervehiclematch dvm
+            ON dvm.vehicle_id = t.id
+            AND dvm.work_date = %(work_date)s::date
+        LEFT JOIN core_user u ON dvm.user_id = u.id
+        LEFT JOIN documents_document d ON u.delivery_user_id = d.id
+        WHERE t.fleet_id = %(fleet_id)s
+          AND t.is_deleted = false
+        ORDER BY match_status DESC, t.plate_number;
     """
 
     cursor.execute(query, {
         "work_date": work_date,
-        "attendance_date": attendance_date,
         "fleet_id": FLEET_ID
     })
 
@@ -100,8 +77,8 @@ def append_data(work_date: str):
     results = query_matches(work_date)
 
     with open(DATA_FILE, "a", encoding="utf-8") as f:
-        for date, name, op_type, match in results:
-            f.write(f"{date}|{name}|{op_type}|{match}\n")
+        for date, vehicle, op_type, driver, match in results:
+            f.write(f"{date}|{vehicle}|{op_type}|{driver}|{match}\n")
 
     print(f"Added {len(results)} records for {work_date}")
 
