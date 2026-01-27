@@ -191,11 +191,117 @@
         <tbody id="tableBody"></tbody>
     </table>
 
-    <p class="update-time">마지막 업데이트: 2026-01-27 23:30:06</p>
+    <p class="update-time">마지막 업데이트: 2026-01-28 08:52:30</p>
 </div>
 
 <script>
 const data = {
+            "2026-01-20": [
+                { vehicle: "경기82배2256", type: "SALES", driver: null, match: false, start: null, end: null },
+                { vehicle: "경기89배5556", type: "SALES", driver: null, match: false, start: null, end: null },
+                { vehicle: "경기93자6642", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "서울00가0000", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "서울90바8671", type: "SUBSCRIPTION", driver: null, match: false, start: null, end: null },
+                { vehicle: "세종86바3338", type: "SALES", driver: null, match: false, start: null, end: null },
+                { vehicle: "세종86바3341", type: "SALES", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4701", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4710", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4768", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4769", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4775", type: "SUBSCRIPTION", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4820", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "경기82배2211", type: "SALES", driver: "김성민", match: true, start: "19:56", end: "22:26" },
+                { vehicle: "서울90바8676", type: "COMPANY_OWNED", driver: "유영진", match: true, start: "19:12", end: "19:13" },
+                { vehicle: "서울90바8676", type: "COMPANY_OWNED", driver: "유영진", match: true, start: "19:13", end: "00:30" }
+            ],
+            "2026-01-21": [
+                { vehicle: "경기82배2211", type: "SALES", driver: null, match: false, start: null, end: null },
+                { vehicle: "경기82배2256", type: "SALES", driver: null, match: false, start: null, end: null },
+                { vehicle: "경기89배5556", type: "SALES", driver: null, match: false, start: null, end: null },
+                { vehicle: "경기93자6642", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "서울00가0000", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "서울90바8671", type: "SUBSCRIPTION", driver: null, match: false, start: null, end: null },
+                { vehicle: "서울90바8676", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "세종86바3338", type: "SALES", driver: null, match: false, start: null, end: null },
+                { vehicle: "세종86바3341", type: "SALES", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4710", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4768", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4769", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4775", type: "SUBSCRIPTION", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4820", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4701", type: "COMPANY_OWNED", driver: "이영진", match: true, start: "20:28", end: "23:13" },
+                { vehicle: "전북91사4701", type: "COMPANY_OWNED", driver: "이영진", match: true, start: "03:58", end: "05:49" }
+            ],
+            "2026-01-22": [
+                { vehicle: "경기82배2211", type: "SALES", driver: null, match: false, start: null, end: null },
+                { vehicle: "경기82배2256", type: "SALES", driver: null, match: false, start: null, end: null },
+                { vehicle: "경기89배5556", type: "SALES", driver: null, match: false, start: null, end: null },
+                { vehicle: "경기93자6642", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "서울00가0000", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "서울90바8671", type: "SUBSCRIPTION", driver: null, match: false, start: null, end: null },
+                { vehicle: "세종86바3338", type: "SALES", driver: null, match: false, start: null, end: null },
+                { vehicle: "세종86바3341", type: "SALES", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4710", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4768", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4769", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4775", type: "SUBSCRIPTION", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4820", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "서울90바8676", type: "COMPANY_OWNED", driver: "유영진", match: true, start: "20:20", end: "02:55" },
+                { vehicle: "서울90바8676", type: "COMPANY_OWNED", driver: "유영진", match: true, start: "02:56", end: "13:37" },
+                { vehicle: "전북91사4701", type: "COMPANY_OWNED", driver: "이영진", match: true, start: "19:35", end: "23:28" },
+                { vehicle: "전북91사4701", type: "COMPANY_OWNED", driver: "이영진", match: true, start: "00:51", end: "13:35" }
+            ],
+            "2026-01-23": [
+                { vehicle: "경기82배2211", type: "SALES", driver: null, match: false, start: null, end: null },
+                { vehicle: "경기82배2256", type: "SALES", driver: null, match: false, start: null, end: null },
+                { vehicle: "경기89배5556", type: "SALES", driver: null, match: false, start: null, end: null },
+                { vehicle: "경기93자6642", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "서울00가0000", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "서울90바8671", type: "SUBSCRIPTION", driver: null, match: false, start: null, end: null },
+                { vehicle: "서울90바8676", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "세종86바3338", type: "SALES", driver: null, match: false, start: null, end: null },
+                { vehicle: "세종86바3341", type: "SALES", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4701", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4710", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4768", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4769", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4775", type: "SUBSCRIPTION", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4820", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null }
+            ],
+            "2026-01-24": [
+                { vehicle: "경기82배2211", type: "SALES", driver: null, match: false, start: null, end: null },
+                { vehicle: "경기82배2256", type: "SALES", driver: null, match: false, start: null, end: null },
+                { vehicle: "경기89배5556", type: "SALES", driver: null, match: false, start: null, end: null },
+                { vehicle: "경기93자6642", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "서울00가0000", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "서울90바8671", type: "SUBSCRIPTION", driver: null, match: false, start: null, end: null },
+                { vehicle: "서울90바8676", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "세종86바3338", type: "SALES", driver: null, match: false, start: null, end: null },
+                { vehicle: "세종86바3341", type: "SALES", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4701", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4710", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4768", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4769", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4775", type: "SUBSCRIPTION", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4820", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null }
+            ],
+            "2026-01-25": [
+                { vehicle: "경기82배2211", type: "SALES", driver: null, match: false, start: null, end: null },
+                { vehicle: "경기82배2256", type: "SALES", driver: null, match: false, start: null, end: null },
+                { vehicle: "경기89배5556", type: "SALES", driver: null, match: false, start: null, end: null },
+                { vehicle: "경기93자6642", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "서울00가0000", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "서울90바8671", type: "SUBSCRIPTION", driver: null, match: false, start: null, end: null },
+                { vehicle: "서울90바8676", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "세종86바3338", type: "SALES", driver: null, match: false, start: null, end: null },
+                { vehicle: "세종86바3341", type: "SALES", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4701", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4710", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4768", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4769", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4775", type: "SUBSCRIPTION", driver: null, match: false, start: null, end: null },
+                { vehicle: "전북91사4820", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null }
+            ],
             "2026-01-26": [
                 { vehicle: "경기82배2211", type: "SALES", driver: null, match: false, start: null, end: null },
                 { vehicle: "경기82배2256", type: "SALES", driver: null, match: false, start: null, end: null },
@@ -218,6 +324,7 @@ const data = {
                 { vehicle: "경기82배2256", type: "SALES", driver: null, match: false, start: null, end: null },
                 { vehicle: "경기89배5556", type: "SALES", driver: null, match: false, start: null, end: null },
                 { vehicle: "경기93자6642", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
+                { vehicle: "서울00가0000", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
                 { vehicle: "서울90바8671", type: "SUBSCRIPTION", driver: null, match: false, start: null, end: null },
                 { vehicle: "서울90바8676", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
                 { vehicle: "세종86바3338", type: "SALES", driver: null, match: false, start: null, end: null },
@@ -227,9 +334,7 @@ const data = {
                 { vehicle: "전북91사4768", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
                 { vehicle: "전북91사4769", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
                 { vehicle: "전북91사4775", type: "SUBSCRIPTION", driver: null, match: false, start: null, end: null },
-                { vehicle: "전북91사4820", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null },
-                { vehicle: "서울00가0000", type: "COMPANY_OWNED", driver: "임지인", match: true, start: null, end: null },
-                { vehicle: "서울00가0000", type: "COMPANY_OWNED", driver: "임지인", match: true, start: null, end: null }
+                { vehicle: "전북91사4820", type: "COMPANY_OWNED", driver: null, match: false, start: null, end: null }
             ]
         };
 const sortedDates = Object.keys(data).sort().reverse();
