@@ -26,6 +26,13 @@ on:
 permissions:
   contents: write
 
+env:
+  PROD_DB_HOST: ${{ secrets.PROD_DB_HOST }}
+  PROD_DB_PORT: ${{ secrets.PROD_DB_PORT }}
+  PROD_DB_NAME: ${{ secrets.PROD_DB_NAME }}
+  PROD_DB_USER: ${{ secrets.PROD_DB_USER }}
+  PROD_DB_PASSWORD: ${{ secrets.PROD_DB_PASSWORD }}
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -47,16 +54,6 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install -r requirements.txt
-
-      - name: Create .env file
-        run: |
-          cat > .env << EOF
-          PROD_DB_HOST=${{ secrets.PROD_DB_HOST }}
-          PROD_DB_PORT=${{ secrets.PROD_DB_PORT }}
-          PROD_DB_NAME=${{ secrets.PROD_DB_NAME }}
-          PROD_DB_USER=${{ secrets.PROD_DB_USER }}
-          PROD_DB_PASSWORD=${{ secrets.PROD_DB_PASSWORD }}
-          EOF
 
       - name: Determine modules to update
         id: modules
