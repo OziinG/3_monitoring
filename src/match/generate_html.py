@@ -321,14 +321,19 @@ function renderDateNav() {{
 
 function renderStats(date) {{
     const items = data[date] || [];
-    const total = items.length;
-    const matched = items.filter(i => i.match).length;
+    const uniqueVehicles = [...new Set(items.map(i => i.vehicle))];
+    const total = uniqueVehicles.length;
+    const matchedVehicles = [...new Set(items.filter(i => i.match).map(i => i.vehicle))];
+    const matched = matchedVehicles.length;
     const notMatched = total - matched;
     const rate = total ? Math.round(matched / total * 100) : 0;
+    const uniqueDrivers = [...new Set(items.filter(i => i.match && i.driver).map(i => i.driver))];
+    const driverCount = uniqueDrivers.length;
 
     document.getElementById('stats').innerHTML = `
         <div class="stat-card"><div class="number">${{total}}</div><div class="label">총 차량</div></div>
-        <div class="stat-card match"><div class="number">${{matched}}</div><div class="label">배정 완료</div></div>
+        <div class="stat-card match"><div class="number">${{matched}}</div><div class="label">배정 차량</div></div>
+        <div class="stat-card match"><div class="number">${{driverCount}}</div><div class="label">배정 인원</div></div>
         <div class="stat-card nomatch"><div class="number">${{notMatched}}</div><div class="label">미배정</div></div>
         <div class="stat-card"><div class="number">${{rate}}%</div><div class="label">배정률</div></div>
     `;
