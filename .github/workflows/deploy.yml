@@ -2,10 +2,8 @@ name: Deploy Monitoring Dashboard
 
 on:
   schedule:
-    # DB monitoring: Every hour
-    - cron: '0 * * * *'
-    # Match report: Daily at 4 PM KST (7:00 UTC)
-    - cron: '0 7 * * *'
+    # Every 2 hours (DB + Match monitoring)
+    - cron: '0 */2 * * *'
 
   workflow_dispatch:
     inputs:
