@@ -65,7 +65,7 @@ jobs:
 
       - name: Query match data
         if: steps.modules.outputs.module == 'all' || steps.modules.outputs.module == 'match'
-        run: python src/match/query_matches.py today
+        run: python src/match/query_matches.py all
 
       - name: Generate all HTML pages
         run: python generate_all.py
