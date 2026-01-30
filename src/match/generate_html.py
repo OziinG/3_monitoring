@@ -330,14 +330,13 @@ function renderDateNav() {{
 
 function renderStats(date) {{
     const items = data[date] || [];
-    const matchedVehicles = [...new Set(items.map(i => i.vehicle))];
-    const matched = matchedVehicles.length;
     const uniqueDrivers = [...new Set(items.filter(i => i.driver).map(i => i.driver))];
     const driverCount = uniqueDrivers.length;
+    const matchCount = items.length;
 
     document.getElementById('stats').innerHTML = `
-        <div class="stat-card match"><div class="number">${{matched}}</div><div class="label">배정 차량</div></div>
-        <div class="stat-card match"><div class="number">${{driverCount}}</div><div class="label">배정 인원</div></div>
+        <div class="stat-card match"><div class="number">${{driverCount}}</div><div class="label">매칭 인원</div></div>
+        <div class="stat-card"><div class="number">${{matchCount}}</div><div class="label">매칭 수</div></div>
     `;
 }}
 
