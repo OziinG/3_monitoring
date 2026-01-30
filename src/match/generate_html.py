@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 data.txt를 읽어서 HTML 파일을 자동 생성하는 스크립트
-차량 기준 배송원 배정 현황
+EVNSOLUTION 차량 매칭 현황
 사용법: python3 generate_html.py
 """
 
@@ -32,6 +32,7 @@ def parse_data():
             date, vehicle, op_type, driver, match = parts[:5]
             start_time = parts[5] if len(parts) > 5 else ''
             end_time = parts[6] if len(parts) > 6 else ''
+            fleet = parts[7] if len(parts) > 7 else ''
 
             data[date].append({
                 'vehicle': vehicle,
@@ -39,7 +40,8 @@ def parse_data():
                 'driver': driver if driver else None,
                 'match': match == 'O',
                 'start': start_time if start_time else None,
-                'end': end_time if end_time else None
+                'end': end_time if end_time else None,
+                'fleet': fleet if fleet else None
             })
 
     return dict(data)
@@ -57,8 +59,9 @@ def generate_html(data):
             match_str = 'true' if item['match'] else 'false'
             start_str = f'"{item["start"]}"' if item['start'] else 'null'
             end_str = f'"{item["end"]}"' if item['end'] else 'null'
+            fleet_str = f'"{item["fleet"]}"' if item['fleet'] else 'null'
             item_strs.append(
-                f'{{ vehicle: "{item["vehicle"]}", type: {type_str}, driver: {driver_str}, match: {match_str}, start: {start_str}, end: {end_str} }}'
+                f'{{ vehicle: "{item["vehicle"]}", type: {type_str}, driver: {driver_str}, match: {match_str}, start: {start_str}, end: {end_str}, fleet: {fleet_str} }}'
             )
         js_data_items.append(
             f'            "{date}": [\n                ' +
@@ -77,7 +80,7 @@ def generate_html(data):
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>컬리/R 차량 배정 현황</title>
+    <title>EVNSOLUTION 차량 매칭 현황</title>
     <style>
         * {{
             margin: 0;
@@ -240,8 +243,8 @@ def generate_html(data):
 </head>
 <body>
 <div class="container">
-    <h1>컬리/R 차량 배정 현황</h1>
-    <p class="summary">Fleet ID: 29 | 차량 기준 배송원 배정</p>
+    <h1>EVNSOLUTION 차량 매칭 현황</h1>
+    <p class="summary">차량 기준 배송원 매칭</p>
 
     <div class="header-row">
         <div class="date-selector">
@@ -255,10 +258,11 @@ def generate_html(data):
     <table>
         <thead>
             <tr>
+                <th>플릿</th>
                 <th>차량번호</th>
                 <th>운영구분</th>
                 <th>배송원</th>
-                <th>배정시간</th>
+                <th>매칭시간</th>
                 <th>배정상태</th>
             </tr>
         </thead>
@@ -342,12 +346,18 @@ function renderStats(date) {{
 function renderTable(date) {{
     const items = data[date] || [];
     const sorted = [...items].sort((a,b) => {{
-        if (a.match !== b.match) return b.match - a.match;
+        // 매칭시간 기준 정렬 (null은 마지막으로)
+        if (a.start && !b.start) return -1;
+        if (!a.start && b.start) return 1;
+        if (a.start && b.start) {{
+            if (a.start !== b.start) return a.start.localeCompare(b.start);
+        }}
         return a.vehicle.localeCompare(b.vehicle,'ko');
     }});
 
     document.getElementById('tableBody').innerHTML = sorted.map(item => `
         <tr>
+            <td>${{item.fleet || '-'}}</td>
             <td>${{item.vehicle}}</td>
             <td>${{item.type ? `<span class="badge ${{getTypeBadgeClass(item.type)}}">${{getTypeLabel(item.type)}}</span>` : '-'}}</td>
             <td>${{item.driver || '-'}}</td>

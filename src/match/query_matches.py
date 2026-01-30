@@ -1,7 +1,6 @@
 """Query vehicle-driver matching data from PostgreSQL.
 
-Based on Terminal (vehicle) with Fleet ID = 29 (Kurly/R).
-Shows which drivers are assigned to each vehicle.
+Shows which drivers are assigned to each vehicle across all fleets.
 """
 import os
 import sys
@@ -15,7 +14,6 @@ PROJECT_DIR = SCRIPT_DIR.parent.parent
 load_dotenv(dotenv_path=PROJECT_DIR / ".env")
 
 DATA_FILE = SCRIPT_DIR / "data.txt"
-FLEET_ID = 29
 START_DATE = "2026-01-20"
 
 
@@ -34,8 +32,7 @@ def query_matches(work_date: str) -> list:
     """
     Query vehicle-driver matches for a specific work date.
 
-    Based on Terminal (vehicle) with Fleet ID = 29.
-    Returns: date, vehicle_number, operation_type, driver_name, match_status
+    Returns: date, vehicle_number, operation_type, driver_name, match_status, start_time, end_time, fleet_name
     """
     config = get_db_config()
     conn = psycopg2.connect(**config)
@@ -49,21 +46,21 @@ def query_matches(work_date: str) -> list:
             COALESCE(d.name, '') as driver_name,
             CASE WHEN dvm.id IS NOT NULL THEN 'O' ELSE 'X' END as match_status,
             TO_CHAR(dvm.match_start_time AT TIME ZONE 'Asia/Seoul', 'HH24:MI') as start_time,
-            TO_CHAR(dvm.match_end_time AT TIME ZONE 'Asia/Seoul', 'HH24:MI') as end_time
+            TO_CHAR(dvm.match_end_time AT TIME ZONE 'Asia/Seoul', 'HH24:MI') as end_time,
+            f.name as fleet_name
         FROM dashboard_terminal t
+        LEFT JOIN dashboard_fleet f ON t.fleet_id = f.id
         LEFT JOIN schedule_drivervehiclematch dvm
             ON dvm.vehicle_id = t.id
             AND dvm.work_date = %(work_date)s::date
         LEFT JOIN core_user u ON dvm.user_id = u.id
         LEFT JOIN documents_document d ON u.delivery_user_id = d.id
-        WHERE t.fleet_id = %(fleet_id)s
-          AND t.is_deleted = false
-        ORDER BY match_status DESC, t.plate_number;
+        WHERE t.is_deleted = false
+        ORDER BY dvm.match_start_time ASC NULLS LAST, t.plate_number;
     """
 
     cursor.execute(query, {
-        "work_date": work_date,
-        "fleet_id": FLEET_ID
+        "work_date": work_date
     })
 
     results = cursor.fetchall()
@@ -79,10 +76,11 @@ def append_data(work_date: str):
     results = query_matches(work_date)
 
     with open(DATA_FILE, "a", encoding="utf-8") as f:
-        for date, vehicle, op_type, driver, match, start_time, end_time in results:
+        for date, vehicle, op_type, driver, match, start_time, end_time, fleet_name in results:
             start = start_time or ''
             end = end_time or ''
-            f.write(f"{date}|{vehicle}|{op_type}|{driver}|{match}|{start}|{end}\n")
+            fleet = fleet_name or ''
+            f.write(f"{date}|{vehicle}|{op_type}|{driver}|{match}|{start}|{end}|{fleet}\n")
 
     print(f"Added {len(results)} records for {work_date}")
 
