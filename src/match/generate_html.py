@@ -29,16 +29,15 @@ def parse_data():
             if len(parts) < 5:
                 continue
 
-            date, vehicle, op_type, driver, match = parts[:5]
-            start_time = parts[5] if len(parts) > 5 else ''
-            end_time = parts[6] if len(parts) > 6 else ''
-            fleet = parts[7] if len(parts) > 7 else ''
+            date, vehicle, op_type, driver = parts[:4]
+            start_time = parts[4] if len(parts) > 4 else ''
+            end_time = parts[5] if len(parts) > 5 else ''
+            fleet = parts[6] if len(parts) > 6 else ''
 
             data[date].append({
                 'vehicle': vehicle,
                 'type': op_type if op_type else None,
                 'driver': driver if driver else None,
-                'match': match == 'O',
                 'start': start_time if start_time else None,
                 'end': end_time if end_time else None,
                 'fleet': fleet if fleet else None
@@ -56,12 +55,11 @@ def generate_html(data):
         for item in items:
             type_str = f'"{item["type"]}"' if item['type'] else 'null'
             driver_str = f'"{item["driver"]}"' if item['driver'] else 'null'
-            match_str = 'true' if item['match'] else 'false'
             start_str = f'"{item["start"]}"' if item['start'] else 'null'
             end_str = f'"{item["end"]}"' if item['end'] else 'null'
             fleet_str = f'"{item["fleet"]}"' if item['fleet'] else 'null'
             item_strs.append(
-                f'{{ vehicle: "{item["vehicle"]}", type: {type_str}, driver: {driver_str}, match: {match_str}, start: {start_str}, end: {end_str}, fleet: {fleet_str} }}'
+                f'{{ vehicle: "{item["vehicle"]}", type: {type_str}, driver: {driver_str}, start: {start_str}, end: {end_str}, fleet: {fleet_str} }}'
             )
         js_data_items.append(
             f'            "{date}": [\n                ' +
@@ -263,7 +261,6 @@ def generate_html(data):
                 <th>운영구분</th>
                 <th>배송원</th>
                 <th>매칭시간</th>
-                <th>배정상태</th>
             </tr>
         </thead>
         <tbody id="tableBody"></tbody>
@@ -325,21 +322,14 @@ function renderDateNav() {{
 
 function renderStats(date) {{
     const items = data[date] || [];
-    const uniqueVehicles = [...new Set(items.map(i => i.vehicle))];
-    const total = uniqueVehicles.length;
-    const matchedVehicles = [...new Set(items.filter(i => i.match).map(i => i.vehicle))];
+    const matchedVehicles = [...new Set(items.map(i => i.vehicle))];
     const matched = matchedVehicles.length;
-    const notMatched = total - matched;
-    const rate = total ? Math.round(matched / total * 100) : 0;
-    const uniqueDrivers = [...new Set(items.filter(i => i.match && i.driver).map(i => i.driver))];
+    const uniqueDrivers = [...new Set(items.filter(i => i.driver).map(i => i.driver))];
     const driverCount = uniqueDrivers.length;
 
     document.getElementById('stats').innerHTML = `
-        <div class="stat-card"><div class="number">${{total}}</div><div class="label">총 차량</div></div>
         <div class="stat-card match"><div class="number">${{matched}}</div><div class="label">배정 차량</div></div>
         <div class="stat-card match"><div class="number">${{driverCount}}</div><div class="label">배정 인원</div></div>
-        <div class="stat-card nomatch"><div class="number">${{notMatched}}</div><div class="label">미배정</div></div>
-        <div class="stat-card"><div class="number">${{rate}}%</div><div class="label">배정률</div></div>
     `;
 }}
 
@@ -362,7 +352,6 @@ function renderTable(date) {{
             <td>${{item.type ? `<span class="badge ${{getTypeBadgeClass(item.type)}}">${{getTypeLabel(item.type)}}</span>` : '-'}}</td>
             <td>${{item.driver || '-'}}</td>
             <td class="time-range">${{formatTimeRange(item.start, item.end)}}</td>
-            <td><span class="badge ${{item.match ? 'badge-match' : 'badge-nomatch'}}">${{item.match ? 'O' : 'X'}}</span></td>
         </tr>
     `).join('');
 }}
