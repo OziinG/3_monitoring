@@ -159,6 +159,14 @@
             color: #666;
             font-family: monospace;
         }
+        .driver-cell {
+            font-weight: 600;
+            background: #f8fafc;
+            vertical-align: middle;
+        }
+        .group-first td {
+            border-top: 2px solid #ddd;
+        }
         .update-time {
             text-align: center;
             color: #999;
@@ -170,7 +178,7 @@
 <body>
 <div class="container">
     <h1>EVNSOLUTION 차량 매칭 현황</h1>
-    <p class="summary">차량 기준 배송원 매칭</p>
+    <p class="summary">배송원 기준 차량 매칭</p>
 
     <div class="header-row">
         <div class="date-selector">
@@ -184,17 +192,17 @@
     <table>
         <thead>
             <tr>
+                <th>배송원</th>
                 <th>플릿</th>
                 <th>차량번호</th>
                 <th>운영구분</th>
-                <th>배송원</th>
                 <th>매칭시간</th>
             </tr>
         </thead>
         <tbody id="tableBody"></tbody>
     </table>
 
-    <p class="update-time">마지막 업데이트: 2026-01-30 06:36:50</p>
+    <p class="update-time">마지막 업데이트: 2026-01-30 06:42:28</p>
 </div>
 
 <script>
@@ -291,25 +299,47 @@ function renderStats(date) {
 
 function renderTable(date) {
     const items = data[date] || [];
+
+    // 플릿 → 배송원 → 차량 순으로 정렬
     const sorted = [...items].sort((a,b) => {
-        // 매칭시간 기준 정렬 (null은 마지막으로)
-        if (a.start && !b.start) return -1;
-        if (!a.start && b.start) return 1;
-        if (a.start && b.start) {
-            if (a.start !== b.start) return a.start.localeCompare(b.start);
-        }
-        return a.vehicle.localeCompare(b.vehicle,'ko');
+        const fleetA = a.fleet || '';
+        const fleetB = b.fleet || '';
+        if (fleetA !== fleetB) return fleetA.localeCompare(fleetB, 'ko');
+        const driverA = a.driver || '';
+        const driverB = b.driver || '';
+        if (driverA !== driverB) return driverA.localeCompare(driverB, 'ko');
+        return a.vehicle.localeCompare(b.vehicle, 'ko');
     });
 
-    document.getElementById('tableBody').innerHTML = sorted.map(item => `
-        <tr>
-            <td>${item.fleet || '-'}</td>
-            <td>${item.vehicle}</td>
-            <td>${item.type ? `<span class="badge ${getTypeBadgeClass(item.type)}">${getTypeLabel(item.type)}</span>` : '-'}</td>
-            <td>${item.driver || '-'}</td>
-            <td class="time-range">${formatTimeRange(item.start, item.end)}</td>
-        </tr>
-    `).join('');
+    // 배송원별 그룹화
+    const grouped = {};
+    sorted.forEach(item => {
+        const key = item.driver || '-';
+        if (!grouped[key]) grouped[key] = [];
+        grouped[key].push(item);
+    });
+
+    let html = '';
+    let isFirst = true;
+    Object.keys(grouped).forEach(driver => {
+        const driverItems = grouped[driver];
+        driverItems.forEach((item, idx) => {
+            const rowClass = idx === 0 ? 'group-first' : '';
+            html += `<tr class="${rowClass}">`;
+            if (idx === 0) {
+                html += `<td class="driver-cell" rowspan="${driverItems.length}">${driver}</td>`;
+            }
+            html += `
+                <td>${item.fleet || '-'}</td>
+                <td>${item.vehicle}</td>
+                <td>${item.type ? `<span class="badge ${getTypeBadgeClass(item.type)}">${getTypeLabel(item.type)}</span>` : '-'}</td>
+                <td class="time-range">${formatTimeRange(item.start, item.end)}</td>
+            </tr>`;
+        });
+        isFirst = false;
+    });
+
+    document.getElementById('tableBody').innerHTML = html;
 }
 
 function selectDate(date) {
