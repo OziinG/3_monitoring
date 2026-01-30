@@ -49,7 +49,7 @@ def query_matches(work_date: str) -> list:
             TO_CHAR(dvm.match_end_time AT TIME ZONE 'Asia/Seoul', 'HH24:MI') as end_time,
             f.name as fleet_name
         FROM dashboard_terminal t
-        LEFT JOIN dashboard_fleet f ON t.fleet_id = f.id
+        LEFT JOIN core_fleet f ON t.fleet_id = f.id
         LEFT JOIN schedule_drivervehiclematch dvm
             ON dvm.vehicle_id = t.id
             AND dvm.work_date = %(work_date)s::date
