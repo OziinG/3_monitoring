@@ -6,8 +6,11 @@ import os
 import sys
 from datetime import datetime, timedelta
 from pathlib import Path
+from zoneinfo import ZoneInfo
 import psycopg2
 from dotenv import load_dotenv
+
+KST = ZoneInfo("Asia/Seoul")
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 PROJECT_DIR = SCRIPT_DIR.parent.parent
@@ -95,7 +98,7 @@ def remove_date(work_date: str):
 def refresh_all():
     """Refresh all data from START_DATE to yesterday."""
     start_dt = datetime.strptime(START_DATE, "%Y-%m-%d")
-    yesterday = datetime.now() - timedelta(days=1)
+    yesterday = datetime.now(KST) - timedelta(days=1)
 
     DATA_FILE.write_text("")
 
@@ -118,7 +121,7 @@ def main():
     cmd = sys.argv[1]
 
     if cmd == "today":
-        yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
+        yesterday = (datetime.now(KST) - timedelta(days=1)).strftime("%Y-%m-%d")
         append_data(yesterday)
     elif cmd == "all":
         refresh_all()
