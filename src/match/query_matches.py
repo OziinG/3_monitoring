@@ -96,8 +96,8 @@ def remove_date(work_date: str):
 
 
 def refresh_all():
-    """Refresh all data from START_DATE to yesterday."""
-    start_dt = datetime.strptime(START_DATE, "%Y-%m-%d")
+    """Refresh all data from START_DATE to yesterday (KST)."""
+    start_dt = datetime.strptime(START_DATE, "%Y-%m-%d").replace(tzinfo=KST)
     yesterday = datetime.now(KST) - timedelta(days=1)
 
     DATA_FILE.write_text("")
